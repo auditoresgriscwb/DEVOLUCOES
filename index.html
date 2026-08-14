@@ -3,15 +3,28 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <title>AUDITORIA DE DEVOLUÇÕES</title>
 
-  <!-- Biblioteca SheetJS para gerar Excel -->
+  <!-- =======================================================
+       BIBLIOTECA SHEETJS - EXCEL
+  ======================================================== -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
+  <!-- =======================================================
+       BIBLIOTECAS JSPDF - PDF
+  ======================================================== -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+
+
   <style>
+
     * {
       box-sizing: border-box;
     }
+
 
     body {
       font-family: Arial, sans-serif;
@@ -20,6 +33,7 @@
       padding: 0;
       background-color: #f4f4f4;
     }
+
 
     .header-banner {
       background-color: #d32f2f;
@@ -31,11 +45,13 @@
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
+
     #top-info {
       margin-bottom: 20px;
       font-size: 16px;
       font-weight: bold;
     }
+
 
     .form-container {
       display: inline-block;
@@ -46,9 +62,11 @@
       padding: 0 10px;
     }
 
+
     .form-group {
       margin-bottom: 20px;
     }
+
 
     label {
       display: block;
@@ -57,6 +75,7 @@
       margin-bottom: 5px;
       font-size: 0.9rem;
     }
+
 
     select,
     input[type="text"] {
@@ -71,6 +90,7 @@
       background-color: white;
     }
 
+
     button {
       padding: 10px 20px;
       font-size: 15px;
@@ -82,14 +102,17 @@
       transition: background-color 0.3s ease;
     }
 
+
     button:hover {
       background-color: #d0d0d0;
     }
+
 
     button:disabled {
       cursor: not-allowed;
       opacity: 0.6;
     }
+
 
     #btn-enviar {
       display: block;
@@ -97,19 +120,23 @@
       background-color: white;
     }
 
+
     #botoes-container {
       display: flex;
       justify-content: center;
       gap: 10px;
       margin-bottom: 30px;
       padding: 0 10px;
+      flex-wrap: wrap;
     }
+
 
     #botoes-container button {
       flex: 1;
       max-width: 180px;
       background-color: white;
     }
+
 
     table {
       border-collapse: collapse;
@@ -120,6 +147,7 @@
       background-color: white;
     }
 
+
     th,
     td {
       border: 1px solid black;
@@ -128,9 +156,11 @@
       word-break: break-word;
     }
 
+
     th {
       background-color: #ddd;
     }
+
 
     #modal-tabela {
       display: none;
@@ -147,6 +177,7 @@
       overflow-y: auto;
     }
 
+
     #modal-botoes-topo {
       position: fixed;
       top: 10px;
@@ -156,6 +187,7 @@
       gap: 15px;
       z-index: 1100;
     }
+
 
     #modal-botoes-topo button {
       padding: 10px 25px;
@@ -167,9 +199,11 @@
       cursor: pointer;
     }
 
+
     .hidden {
       display: none !important;
     }
+
 
     #mensagem-erro,
     #mensagem-limite {
@@ -180,12 +214,14 @@
       min-height: 18px;
     }
 
+
     #rodape {
       margin-top: 20px;
       font-size: 16px;
       font-weight: bold;
       padding-bottom: 20px;
     }
+
 
     #confirmacao-exportar,
     #confirmacao-limpar {
@@ -202,6 +238,7 @@
       padding: 20px;
     }
 
+
     #confirmacao-exportar > div,
     #confirmacao-limpar > div {
       background: white;
@@ -212,6 +249,7 @@
       width: 100%;
     }
 
+
     #confirmacao-exportar button,
     #confirmacao-limpar button {
       margin: 10px 5px 0 5px;
@@ -219,104 +257,237 @@
       padding: 8px;
     }
 
+
     @media (max-width: 600px) {
+
       .header-banner {
         font-size: 19px;
         padding: 16px 10px;
       }
 
+
       #top-info {
         font-size: 14px;
       }
+
 
       #botoes-container {
         flex-direction: column;
         align-items: center;
       }
 
+
       #botoes-container button {
         width: 100%;
         max-width: 300px;
       }
+
 
       table {
         width: 98%;
         font-size: 13px;
       }
 
+
       th,
       td {
         padding: 7px 4px;
       }
 
+
       #modal-botoes-topo {
         gap: 8px;
         width: 100%;
         justify-content: center;
+        flex-wrap: wrap;
       }
+
 
       #modal-botoes-topo button {
         padding: 9px 15px;
         font-size: 14px;
       }
+
     }
+
   </style>
+
 </head>
 
+
 <body>
+
+
+  <!-- =======================================================
+       CABEÇALHO
+  ======================================================== -->
 
   <div class="header-banner">
     AUDITORIA DE DEVOLUÇÕES
   </div>
 
+
+  <!-- =======================================================
+       INFORMAÇÕES
+  ======================================================== -->
+
   <div id="top-info">
+
     QTD Bipada:
     <span id="contador">0</span>
+
     |
+
     Último código:
     <span id="ultimo-codigo">-</span>
+
   </div>
 
-  <form class="form-container" id="meuFormulario">
+
+  <!-- =======================================================
+       FORMULÁRIO
+  ======================================================== -->
+
+  <form
+    class="form-container"
+    id="meuFormulario"
+  >
+
+
+    <!-- AUDITOR -->
 
     <div class="form-group">
-      <label for="base">AUDITOR</label>
 
-      <select id="base" required>
-        <option value="" disabled selected>Selecione o AUDITOR</option>
-        <option value="Jonathan D M R">Jonathan D M R</option>
-        <option value="Douleiber J M F">Douleiber J M F</option>
-        <option value="Marcos M">Marcos M</option>
-        <option value="Nathalia C V B">Nathalia C V B</option>
-        <option value="Gabriel L M">Gabriel L M</option>
-        <option value="Sofia C P G">Sofia C P G</option>
-        <option value="Kauany T P">Kauany T P</option>
-        <option value="Mailen A C R">Mailen A C R</option>
-        <option value="Nubia E R">Nubia E R</option>
-        <option value="Yosden J P A">Yosden J P A</option>
-        <option value="Fabiana D S P">Fabiana D S P</option>
-        <option value="OUTROS">OUTROS</option>
+      <label for="base">
+        AUDITOR
+      </label>
+
+
+      <select
+        id="base"
+        required
+      >
+
+        <option
+          value=""
+          disabled
+          selected
+        >
+          Selecione o AUDITOR
+        </option>
+
+        <option value="Jonathan D M R">
+          Jonathan D M R
+        </option>
+
+        <option value="Douleiber J M F">
+          Douleiber J M F
+        </option>
+
+        <option value="Marcos M">
+          Marcos M
+        </option>
+
+        <option value="Nathalia C V B">
+          Nathalia C V B
+        </option>
+
+        <option value="Gabriel L M">
+          Gabriel L M
+        </option>
+
+        <option value="Sofia C P G">
+          Sofia C P G
+        </option>
+
+        <option value="Kauany T P">
+          Kauany T P
+        </option>
+
+        <option value="Mailen A C R">
+          Mailen A C R
+        </option>
+
+        <option value="Nubia E R">
+          Nubia E R
+        </option>
+
+        <option value="Yosden J P A">
+          Yosden J P A
+        </option>
+
+        <option value="Fabiana D S P">
+          Fabiana D S P
+        </option>
+
+        <option value="OUTROS">
+          OUTROS
+        </option>
+
       </select>
+
     </div>
 
-    <div class="form-group">
-      <label for="setor">PJ</label>
 
-      <select id="setor" required>
-        <option value="" disabled selected>Selecione o PJ</option>
-        <option value="DEVOLUÇÃO JOSE IVAN">DEVOLUÇÃO-JOSE-IVAN</option>
-        <option value="DEVOLUÇÃO JAPÃO">DEVOLUÇÃO-JAPÃO</option>
-        <option value="DEVOLUÇÃO PASCOAL">DEVOLUÇÃO-PASCOAL</option>
-        <option value="DEVOLUÇÃO LITORAL">DEVOLUÇÃO-LITORAL</option>
-        <option value="DEVOLUÇÃO OUTROS">DEVOLUÇÃO-OUTROS</option>
+    <!-- PJ -->
+
+    <div class="form-group">
+
+      <label for="setor">
+        PJ
+      </label>
+
+
+      <select
+        id="setor"
+        required
+      >
+
+        <option
+          value=""
+          disabled
+          selected
+        >
+          Selecione o PJ
+        </option>
+
+        <option value="DEVOLUÇÃO JOSE IVAN">
+          DEVOLUÇÃO-JOSE-IVAN
+        </option>
+
+        <option value="DEVOLUÇÃO JAPÃO">
+          DEVOLUÇÃO-JAPÃO
+        </option>
+
+        <option value="DEVOLUÇÃO PASCOAL">
+          DEVOLUÇÃO-PASCOAL
+        </option>
+
+        <option value="DEVOLUÇÃO LITORAL">
+          DEVOLUÇÃO-LITORAL
+        </option>
+
+        <option value="DEVOLUÇÃO OUTROS">
+          DEVOLUÇÃO-OUTROS
+        </option>
+
         <option value="DEVOLUÇÃO DESISTENCIA MOTORISTA">
           DEVOLUÇÃO-DESISTENCIA-MOTORISTA
         </option>
+
       </select>
+
     </div>
 
+
+    <!-- CÓDIGO -->
+
     <div class="form-group">
-      <label for="codigo">CÓDIGO</label>
+
+      <label for="codigo">
+        CÓDIGO
+      </label>
+
 
       <input
         type="text"
@@ -325,183 +496,352 @@
         autocomplete="off"
         inputmode="text"
       />
+
     </div>
 
-    <button type="submit" id="btn-enviar">
+
+    <!-- ENVIAR -->
+
+    <button
+      type="submit"
+      id="btn-enviar"
+    >
       ENVIAR
     </button>
 
+
     <div id="mensagem-erro"></div>
+
     <div id="mensagem-limite"></div>
 
   </form>
 
+
+  <!-- =======================================================
+       BOTÕES PRINCIPAIS
+  ======================================================== -->
+
   <div id="botoes-container">
+
     <button id="botao-tabela">
       Consultar Peças
     </button>
+
 
     <button id="botao-exportar">
       Exportar Excel
     </button>
 
+
+    <button id="botao-exportar-pdf">
+      Exportar PDF
+    </button>
+
+
     <button id="botao-limpar">
       Limpar tudo
     </button>
+
   </div>
+
+
+  <!-- =======================================================
+       MODAL / TABELA
+  ======================================================== -->
 
   <div id="modal-tabela">
 
+
     <div id="modal-botoes-topo">
+
       <button id="botao-ocultar">
         Voltar
       </button>
 
+
       <button id="botao-exportar-modal">
         Exportar Excel
       </button>
+
+
+      <button id="botao-exportar-pdf-modal">
+        Exportar PDF
+      </button>
+
     </div>
 
+
     <table id="tabela">
+
       <thead>
+
         <tr>
-          <th>AUDITOR</th>
-          <th>PJ</th>
-          <th>CÓDIGO</th>
-          <th>Data/Hora</th>
+
+          <th>
+            AUDITOR
+          </th>
+
+          <th>
+            PJ
+          </th>
+
+          <th>
+            CÓDIGO
+          </th>
+
+          <th>
+            Data/Hora
+          </th>
+
         </tr>
+
       </thead>
 
+
       <tbody></tbody>
+
     </table>
 
   </div>
 
+
+  <!-- =======================================================
+       RODAPÉ
+  ======================================================== -->
+
   <div id="rodape">
+
     Restantes:
-    <span id="restantes">2500</span>
+    <span id="restantes">
+      2500
+    </span>
+
   </div>
 
-  <!-- CONFIRMAÇÃO EXPORTAR -->
+
+  <!-- =======================================================
+       CONFIRMAÇÃO EXPORTAR
+  ======================================================== -->
 
   <div id="confirmacao-exportar">
 
     <div>
+
       <p>
         Após exportar, a auditoria será reiniciada.
         Deseja continuar?
       </p>
 
+
       <button id="confirmar-sim-exportar">
         Sim
       </button>
 
+
       <button id="confirmar-nao-exportar">
         Não
       </button>
+
     </div>
 
   </div>
 
-  <!-- CONFIRMAÇÃO LIMPAR -->
+
+  <!-- =======================================================
+       CONFIRMAÇÃO LIMPAR
+  ======================================================== -->
 
   <div id="confirmacao-limpar">
 
     <div>
+
       <p>
         Todos os dados serão apagados.
         Deseja continuar?
       </p>
 
+
       <button id="confirmar-sim-limpar">
         Sim
       </button>
 
+
       <button id="confirmar-nao-limpar">
         Não
       </button>
+
     </div>
 
   </div>
 
+
   <script>
+
+
     // =========================================================
     // ELEMENTOS
     // =========================================================
 
-    const form = document.getElementById("meuFormulario");
+    const form =
+      document.getElementById(
+        "meuFormulario"
+      );
+
 
     const tabelaBody =
-      document.querySelector("#tabela tbody");
+      document.querySelector(
+        "#tabela tbody"
+      );
+
 
     const contador =
-      document.getElementById("contador");
+      document.getElementById(
+        "contador"
+      );
+
 
     const ultimoCodigo =
-      document.getElementById("ultimo-codigo");
+      document.getElementById(
+        "ultimo-codigo"
+      );
+
 
     const restantes =
-      document.getElementById("restantes");
+      document.getElementById(
+        "restantes"
+      );
+
 
     const btnEnviar =
-      document.getElementById("btn-enviar");
+      document.getElementById(
+        "btn-enviar"
+      );
+
 
     const erroMsg =
-      document.getElementById("mensagem-erro");
+      document.getElementById(
+        "mensagem-erro"
+      );
+
 
     const limiteMsg =
-      document.getElementById("mensagem-limite");
+      document.getElementById(
+        "mensagem-limite"
+      );
+
 
     const modalTabela =
-      document.getElementById("modal-tabela");
+      document.getElementById(
+        "modal-tabela"
+      );
+
 
     const botaoTabela =
-      document.getElementById("botao-tabela");
+      document.getElementById(
+        "botao-tabela"
+      );
+
 
     const botaoOcultar =
-      document.getElementById("botao-ocultar");
+      document.getElementById(
+        "botao-ocultar"
+      );
+
 
     const botaoExportar =
-      document.getElementById("botao-exportar");
+      document.getElementById(
+        "botao-exportar"
+      );
+
 
     const botaoExportarModal =
-      document.getElementById("botao-exportar-modal");
+      document.getElementById(
+        "botao-exportar-modal"
+      );
+
+
+    const botaoExportarPdf =
+      document.getElementById(
+        "botao-exportar-pdf"
+      );
+
+
+    const botaoExportarPdfModal =
+      document.getElementById(
+        "botao-exportar-pdf-modal"
+      );
+
 
     const botaoLimpar =
-      document.getElementById("botao-limpar");
+      document.getElementById(
+        "botao-limpar"
+      );
+
 
     const confirmacaoExportar =
-      document.getElementById("confirmacao-exportar");
+      document.getElementById(
+        "confirmacao-exportar"
+      );
+
 
     const btnSimExportar =
-      document.getElementById("confirmar-sim-exportar");
+      document.getElementById(
+        "confirmar-sim-exportar"
+      );
+
 
     const btnNaoExportar =
-      document.getElementById("confirmar-nao-exportar");
+      document.getElementById(
+        "confirmar-nao-exportar"
+      );
+
 
     const confirmacaoLimpar =
-      document.getElementById("confirmacao-limpar");
+      document.getElementById(
+        "confirmacao-limpar"
+      );
+
 
     const btnSimLimpar =
-      document.getElementById("confirmar-sim-limpar");
+      document.getElementById(
+        "confirmar-sim-limpar"
+      );
+
 
     const btnNaoLimpar =
-      document.getElementById("confirmar-nao-limpar");
+      document.getElementById(
+        "confirmar-nao-limpar"
+      );
+
 
     const selectBase =
-      document.getElementById("base");
+      document.getElementById(
+        "base"
+      );
+
 
     const selectSetor =
-      document.getElementById("setor");
+      document.getElementById(
+        "setor"
+      );
+
 
     const inputCodigo =
-      document.getElementById("codigo");
+      document.getElementById(
+        "codigo"
+      );
+
 
     const topInfo =
-      document.getElementById("top-info");
+      document.getElementById(
+        "top-info"
+      );
+
 
     const rodape =
-      document.getElementById("rodape");
+      document.getElementById(
+        "rodape"
+      );
 
 
     // =========================================================
@@ -510,9 +850,25 @@
 
     const LIMITE = 2500;
 
-    const STORAGE_DADOS = "dadosInventario";
-    const STORAGE_BASE = "ultimoBase";
-    const STORAGE_SETOR = "ultimoSetor";
+
+    const STORAGE_DADOS =
+      "dadosInventario";
+
+
+    const STORAGE_BASE =
+      "ultimoBase";
+
+
+    const STORAGE_SETOR =
+      "ultimoSetor";
+
+
+    // =========================================================
+    // FORMATO DA EXPORTAÇÃO
+    // =========================================================
+
+    let formatoExportacao =
+      "excel";
 
 
     // =========================================================
@@ -521,23 +877,32 @@
 
     let dados = [];
 
-    try {
-      const dadosSalvos =
-        localStorage.getItem(STORAGE_DADOS);
 
-      dados = dadosSalvos
-        ? JSON.parse(dadosSalvos)
-        : [];
+    try {
+
+      const dadosSalvos =
+        localStorage.getItem(
+          STORAGE_DADOS
+        );
+
+
+      dados =
+        dadosSalvos
+          ? JSON.parse(dadosSalvos)
+          : [];
+
 
       if (!Array.isArray(dados)) {
         dados = [];
       }
 
     } catch (erro) {
+
       console.error(
         "Erro ao carregar dados:",
         erro
       );
+
 
       dados = [];
     }
@@ -548,20 +913,26 @@
     // =========================================================
 
     function salvarDados() {
+
       try {
+
         localStorage.setItem(
           STORAGE_DADOS,
           JSON.stringify(dados)
         );
+
       } catch (erro) {
+
         console.error(
           "Erro ao salvar dados:",
           erro
         );
 
+
         erroMsg.textContent =
           "Erro ao salvar os dados no navegador.";
       }
+
     }
 
 
@@ -574,25 +945,33 @@
       try {
 
         if (selectBase.value) {
+
           localStorage.setItem(
             STORAGE_BASE,
             selectBase.value
           );
+
         }
 
+
         if (selectSetor.value) {
+
           localStorage.setItem(
             STORAGE_SETOR,
             selectSetor.value
           );
+
         }
 
       } catch (erro) {
+
         console.error(
           "Erro ao salvar seleções:",
           erro
         );
+
       }
+
     }
 
 
@@ -606,9 +985,11 @@
         STORAGE_BASE
       );
 
+
       localStorage.removeItem(
         STORAGE_SETOR
       );
+
     }
 
 
@@ -619,24 +1000,40 @@
     function carregarUltimosSelects() {
 
       const baseSalvo =
-        localStorage.getItem(STORAGE_BASE);
+        localStorage.getItem(
+          STORAGE_BASE
+        );
+
 
       const setorSalvo =
-        localStorage.getItem(STORAGE_SETOR);
+        localStorage.getItem(
+          STORAGE_SETOR
+        );
 
 
       if (baseSalvo) {
-        selectBase.value = baseSalvo;
+
+        selectBase.value =
+          baseSalvo;
+
       } else {
+
         selectBase.value = "";
+
       }
 
 
       if (setorSalvo) {
-        selectSetor.value = setorSalvo;
+
+        selectSetor.value =
+          setorSalvo;
+
       } else {
+
         selectSetor.value = "";
+
       }
+
     }
 
 
@@ -649,23 +1046,30 @@
       tabelaBody.innerHTML = "";
 
 
-      dados.forEach((dado) => {
+      dados.forEach(
+        (dado) => {
 
-        const row =
-          tabelaBody.insertRow();
+          const row =
+            tabelaBody.insertRow();
 
-        row.insertCell(0).textContent =
-          dado.base;
 
-        row.insertCell(1).textContent =
-          dado.setor;
+          row.insertCell(0).textContent =
+            dado.base;
 
-        row.insertCell(2).textContent =
-          dado.codigo;
 
-        row.insertCell(3).textContent =
-          dado.dataHora;
-      });
+          row.insertCell(1).textContent =
+            dado.setor;
+
+
+          row.insertCell(2).textContent =
+            dado.codigo;
+
+
+          row.insertCell(3).textContent =
+            dado.dataHora;
+
+        }
+      );
 
 
       contador.textContent =
@@ -685,17 +1089,24 @@
 
       if (dados.length >= LIMITE) {
 
-        btnEnviar.disabled = true;
+        btnEnviar.disabled =
+          true;
+
 
         limiteMsg.textContent =
           "Limite atingido. Para continuar, exporte os dados inseridos até agora.";
 
       } else {
 
-        btnEnviar.disabled = false;
+        btnEnviar.disabled =
+          false;
 
-        limiteMsg.textContent = "";
+
+        limiteMsg.textContent =
+          "";
+
       }
+
     }
 
 
@@ -709,14 +1120,18 @@
 
         e.preventDefault();
 
-        erroMsg.textContent = "";
+
+        erroMsg.textContent =
+          "";
 
 
         const base =
           selectBase.value.trim();
 
+
         const setor =
           selectSetor.value.trim();
+
 
         let codigo =
           inputCodigo.value
@@ -733,7 +1148,9 @@
           erroMsg.textContent =
             "Por favor, selecione o AUDITOR.";
 
+
           selectBase.focus();
+
 
           return;
         }
@@ -748,7 +1165,9 @@
           erroMsg.textContent =
             "Por favor, selecione o PJ.";
 
+
           selectSetor.focus();
+
 
           return;
         }
@@ -763,7 +1182,9 @@
           erroMsg.textContent =
             "Digite ou bipe um código.";
 
+
           inputCodigo.focus();
+
 
           return;
         }
@@ -778,7 +1199,9 @@
           erroMsg.textContent =
             "Somente letras e números são permitidos.";
 
+
           inputCodigo.focus();
+
 
           return;
         }
@@ -800,7 +1223,9 @@
           erroMsg.textContent =
             "Código já bipado.";
 
+
           inputCodigo.select();
+
 
           return;
         }
@@ -814,6 +1239,7 @@
 
           erroMsg.textContent =
             "Limite atingido. Não é possível adicionar mais.";
+
 
           return;
         }
@@ -834,10 +1260,19 @@
         // -----------------------------------------------------
 
         dados.push({
-          base: base,
-          setor: setor,
-          codigo: codigo,
-          dataHora: dataHora
+
+          base:
+            base,
+
+          setor:
+            setor,
+
+          codigo:
+            codigo,
+
+          dataHora:
+            dataHora
+
         });
 
 
@@ -857,11 +1292,16 @@
         ultimoCodigo.textContent =
           codigo;
 
-        inputCodigo.value = "";
+
+        inputCodigo.value =
+          "";
+
 
         atualizarUI();
 
+
         inputCodigo.focus();
+
       }
     );
 
@@ -870,52 +1310,107 @@
     // CONSULTAR PEÇAS
     // =========================================================
 
-    botaoTabela.onclick = function () {
+    botaoTabela.onclick =
+      function () {
 
-      modalTabela.style.display =
-        "flex";
+        modalTabela.style.display =
+          "flex";
 
-      form.classList.add("hidden");
 
-      botaoTabela.classList.add("hidden");
+        form.classList.add(
+          "hidden"
+        );
 
-      botaoExportar.classList.add("hidden");
 
-      botaoLimpar.classList.add("hidden");
+        botaoTabela.classList.add(
+          "hidden"
+        );
 
-      topInfo.classList.add("hidden");
 
-      rodape.classList.add("hidden");
+        botaoExportar.classList.add(
+          "hidden"
+        );
 
-      erroMsg.textContent = "";
 
-      limiteMsg.textContent = "";
-    };
+        botaoExportarPdf.classList.add(
+          "hidden"
+        );
+
+
+        botaoLimpar.classList.add(
+          "hidden"
+        );
+
+
+        topInfo.classList.add(
+          "hidden"
+        );
+
+
+        rodape.classList.add(
+          "hidden"
+        );
+
+
+        erroMsg.textContent =
+          "";
+
+
+        limiteMsg.textContent =
+          "";
+
+      };
 
 
     // =========================================================
     // VOLTAR
     // =========================================================
 
-    botaoOcultar.onclick = function () {
+    botaoOcultar.onclick =
+      function () {
 
-      modalTabela.style.display =
-        "none";
+        modalTabela.style.display =
+          "none";
 
-      form.classList.remove("hidden");
 
-      botaoTabela.classList.remove("hidden");
+        form.classList.remove(
+          "hidden"
+        );
 
-      botaoExportar.classList.remove("hidden");
 
-      botaoLimpar.classList.remove("hidden");
+        botaoTabela.classList.remove(
+          "hidden"
+        );
 
-      topInfo.classList.remove("hidden");
 
-      rodape.classList.remove("hidden");
+        botaoExportar.classList.remove(
+          "hidden"
+        );
 
-      inputCodigo.focus();
-    };
+
+        botaoExportarPdf.classList.remove(
+          "hidden"
+        );
+
+
+        botaoLimpar.classList.remove(
+          "hidden"
+        );
+
+
+        topInfo.classList.remove(
+          "hidden"
+        );
+
+
+        rodape.classList.remove(
+          "hidden"
+        );
+
+
+        inputCodigo.focus();
+
+      };
 
 
     // =========================================================
@@ -925,24 +1420,88 @@
     function formatarTexto(texto) {
 
       return texto
+
         .normalize("NFD")
+
         .replace(
           /[\u0300-\u036f]/g,
           ""
         )
+
         .replace(
           /[^a-zA-Z0-9]+/g,
           "-"
         )
+
         .replace(
           /-+/g,
           "-"
         )
+
         .replace(
           /^-|-$/g,
           ""
         )
+
         .toUpperCase();
+
+    }
+
+
+    // =========================================================
+    // GERAR DATA PARA NOME DO ARQUIVO
+    // =========================================================
+
+    function gerarDataNomeArquivo() {
+
+      const agora =
+        new Date();
+
+
+      const dia =
+        String(
+          agora.getDate()
+        ).padStart(2, "0");
+
+
+      const mes =
+        String(
+          agora.getMonth() + 1
+        ).padStart(2, "0");
+
+
+      const ano =
+        agora.getFullYear();
+
+
+      const hora =
+        String(
+          agora.getHours()
+        ).padStart(2, "0");
+
+
+      const minuto =
+        String(
+          agora.getMinutes()
+        ).padStart(2, "0");
+
+
+      const segundo =
+        String(
+          agora.getSeconds()
+        ).padStart(2, "0");
+
+
+      return {
+        agora,
+        dia,
+        mes,
+        ano,
+        hora,
+        minuto,
+        segundo
+      };
+
     }
 
 
@@ -957,6 +1516,7 @@
         alert(
           "Não existem dados para exportar."
         );
+
 
         return false;
       }
@@ -973,18 +1533,24 @@
 
         ...dados.map(
           (dado) => [
+
             dado.base,
+
             dado.setor,
+
             dado.codigo,
+
             dado.dataHora
+
           ]
         )
+
       ];
 
 
-      // -----------------------------------------------------
+      // -------------------------------------------------------
       // CRIAR PLANILHA
-      // -----------------------------------------------------
+      // -------------------------------------------------------
 
       const worksheet =
         XLSX.utils.aoa_to_sheet(
@@ -992,103 +1558,102 @@
         );
 
 
-      // -----------------------------------------------------
-      // AJUSTAR LARGURA DAS COLUNAS
-      // -----------------------------------------------------
+      // -------------------------------------------------------
+      // LARGURA DAS COLUNAS
+      // -------------------------------------------------------
 
       worksheet["!cols"] = [
-        { wch: 25 },
-        { wch: 35 },
-        { wch: 20 },
-        { wch: 22 }
+
+        {
+          wch: 25
+        },
+
+        {
+          wch: 35
+        },
+
+        {
+          wch: 20
+        },
+
+        {
+          wch: 22
+        }
+
       ];
 
 
-      // -----------------------------------------------------
-      // CRIAR ARQUIVO
-      // -----------------------------------------------------
+      // -------------------------------------------------------
+      // CRIAR WORKBOOK
+      // -------------------------------------------------------
 
       const workbook =
         XLSX.utils.book_new();
 
 
       XLSX.utils.book_append_sheet(
+
         workbook,
+
         worksheet,
+
         "DEVOLUCOES"
+
       );
 
 
-      // -----------------------------------------------------
-      // DATA E HORA DO ARQUIVO
-      // -----------------------------------------------------
+      // -------------------------------------------------------
+      // DATA
+      // -------------------------------------------------------
 
-      const agora =
-        new Date();
-
-      const dia =
-        String(
-          agora.getDate()
-        ).padStart(2, "0");
-
-      const mes =
-        String(
-          agora.getMonth() + 1
-        ).padStart(2, "0");
-
-      const ano =
-        agora.getFullYear();
-
-      const hora =
-        String(
-          agora.getHours()
-        ).padStart(2, "0");
-
-      const minuto =
-        String(
-          agora.getMinutes()
-        ).padStart(2, "0");
-
-      const segundo =
-        String(
-          agora.getSeconds()
-        ).padStart(2, "0");
+      const dataArquivo =
+        gerarDataNomeArquivo();
 
 
-      // -----------------------------------------------------
-      // NOME DO AUDITOR
-      // -----------------------------------------------------
+      // -------------------------------------------------------
+      // AUDITOR
+      // -------------------------------------------------------
 
       const baseNome =
         formatarTexto(
+
+          dados[0]?.base ||
+
           selectBase.value ||
+
           "SEM-BASE"
+
         );
 
 
-      // -----------------------------------------------------
-      // NOME DO PJ
-      // CORRIGIDO
-      // -----------------------------------------------------
+      // -------------------------------------------------------
+      // PJ
+      // -------------------------------------------------------
 
       const setorNome =
         formatarTexto(
+
+          dados[0]?.setor ||
+
           selectSetor.value ||
+
           "SEM-SETOR"
+
         );
 
 
-      // -----------------------------------------------------
-      // NOME FINAL DO ARQUIVO
-      // -----------------------------------------------------
+      // -------------------------------------------------------
+      // NOME FINAL
+      // -------------------------------------------------------
 
       const nomeArquivo =
-        `AUDITORIA-DEVOLUCOES-${baseNome}-${setorNome}-${dia}-${mes}-${ano}-${hora}h${minuto}m${segundo}s.xlsx`;
+
+        `AUDITORIA-DEVOLUCOES-${baseNome}-${setorNome}-${dataArquivo.dia}-${dataArquivo.mes}-${dataArquivo.ano}-${dataArquivo.hora}h${dataArquivo.minuto}m${dataArquivo.segundo}s.xlsx`;
 
 
-      // -----------------------------------------------------
+      // -------------------------------------------------------
       // DOWNLOAD
-      // -----------------------------------------------------
+      // -------------------------------------------------------
 
       XLSX.writeFile(
         workbook,
@@ -1097,14 +1662,15 @@
 
 
       return true;
+
     }
 
 
     // =========================================================
-    // ABRIR CONFIRMAÇÃO DE EXPORTAÇÃO
+    // EXPORTAR PDF
     // =========================================================
 
-    function abrirConfirmacaoExportar() {
+    function exportarPDF() {
 
       if (dados.length === 0) {
 
@@ -1112,21 +1678,528 @@
           "Não existem dados para exportar."
         );
 
+
+        return false;
+      }
+
+
+      // -------------------------------------------------------
+      // VERIFICAR BIBLIOTECAS
+      // -------------------------------------------------------
+
+      if (
+        !window.jspdf ||
+        !window.jspdf.jsPDF
+      ) {
+
+        alert(
+          "Não foi possível carregar a biblioteca de PDF. Verifique sua conexão com a internet e tente novamente."
+        );
+
+
+        return false;
+      }
+
+
+      // -------------------------------------------------------
+      // CRIAR DOCUMENTO
+      // -------------------------------------------------------
+
+      const {
+        jsPDF
+      } = window.jspdf;
+
+
+      const doc =
+        new jsPDF({
+
+          orientation:
+            "landscape",
+
+          unit:
+            "mm",
+
+          format:
+            "a4"
+
+        });
+
+
+      // -------------------------------------------------------
+      // DATA
+      // -------------------------------------------------------
+
+      const dataArquivo =
+        gerarDataNomeArquivo();
+
+
+      // -------------------------------------------------------
+      // AUDITOR
+      // -------------------------------------------------------
+
+      const auditor =
+        dados[0]?.base ||
+
+        selectBase.value ||
+
+        "SEM AUDITOR";
+
+
+      // -------------------------------------------------------
+      // PJ
+      // -------------------------------------------------------
+
+      const setor =
+        dados[0]?.setor ||
+
+        selectSetor.value ||
+
+        "SEM PJ";
+
+
+      // -------------------------------------------------------
+      // NOME DO ARQUIVO
+      // -------------------------------------------------------
+
+      const baseNome =
+        formatarTexto(
+          auditor
+        );
+
+
+      const setorNome =
+        formatarTexto(
+          setor
+        );
+
+
+      const nomeArquivo =
+
+        `AUDITORIA-DEVOLUCOES-${baseNome}-${setorNome}-${dataArquivo.dia}-${dataArquivo.mes}-${dataArquivo.ano}-${dataArquivo.hora}h${dataArquivo.minuto}m${dataArquivo.segundo}s.pdf`;
+
+
+      // -------------------------------------------------------
+      // CABEÇALHO VERMELHO
+      // -------------------------------------------------------
+
+      doc.setFillColor(
+        211,
+        47,
+        47
+      );
+
+
+      doc.rect(
+        0,
+        0,
+        297,
+        22,
+        "F"
+      );
+
+
+      // -------------------------------------------------------
+      // TÍTULO
+      // -------------------------------------------------------
+
+      doc.setTextColor(
+        255,
+        255,
+        255
+      );
+
+
+      doc.setFont(
+        "helvetica",
+        "bold"
+      );
+
+
+      doc.setFontSize(
+        17
+      );
+
+
+      doc.text(
+
+        "AUDITORIA DE DEVOLUÇÕES",
+
+        148.5,
+
+        14,
+
+        {
+          align:
+            "center"
+        }
+
+      );
+
+
+      // -------------------------------------------------------
+      // INFORMAÇÕES
+      // -------------------------------------------------------
+
+      doc.setTextColor(
+        0,
+        0,
+        0
+      );
+
+
+      doc.setFont(
+        "helvetica",
+        "normal"
+      );
+
+
+      doc.setFontSize(
+        10
+      );
+
+
+      doc.text(
+
+        `Auditor: ${auditor}`,
+
+        14,
+
+        30
+
+      );
+
+
+      doc.text(
+
+        `PJ: ${setor}`,
+
+        14,
+
+        36
+
+      );
+
+
+      doc.text(
+
+        `Quantidade de registros: ${dados.length}`,
+
+        14,
+
+        42
+
+      );
+
+
+      doc.text(
+
+        `Exportado em: ${dataArquivo.agora.toLocaleString("pt-BR")}`,
+
+        14,
+
+        48
+
+      );
+
+
+      // -------------------------------------------------------
+      // DADOS DA TABELA
+      // -------------------------------------------------------
+
+      const linhasPDF =
+
+        dados.map(
+
+          (dado) => [
+
+            dado.base,
+
+            dado.setor,
+
+            dado.codigo,
+
+            dado.dataHora
+
+          ]
+
+        );
+
+
+      // -------------------------------------------------------
+      // TABELA PDF
+      // -------------------------------------------------------
+
+      doc.autoTable({
+
+        startY:
+          54,
+
+        head: [
+
+          [
+
+            "AUDITOR",
+
+            "PJ",
+
+            "CÓDIGO",
+
+            "DATA/HORA"
+
+          ]
+
+        ],
+
+        body:
+          linhasPDF,
+
+        theme:
+          "grid",
+
+        styles: {
+
+          font:
+            "helvetica",
+
+          fontSize:
+            8,
+
+          cellPadding:
+            3,
+
+          halign:
+            "center",
+
+          valign:
+            "middle",
+
+          lineColor: [
+            0,
+            0,
+            0
+          ],
+
+          lineWidth:
+            0.2
+
+        },
+
+        headStyles: {
+
+          fillColor: [
+            211,
+            47,
+            47
+          ],
+
+          textColor: [
+            255,
+            255,
+            255
+          ],
+
+          fontStyle:
+            "bold",
+
+          halign:
+            "center"
+
+        },
+
+        alternateRowStyles: {
+
+          fillColor: [
+            245,
+            245,
+            245
+          ]
+
+        },
+
+        columnStyles: {
+
+          0: {
+            cellWidth:
+              55
+          },
+
+          1: {
+            cellWidth:
+              75
+          },
+
+          2: {
+            cellWidth:
+              45
+          },
+
+          3: {
+            cellWidth:
+              55
+          }
+
+        },
+
+        margin: {
+
+          left:
+            14,
+
+          right:
+            14
+
+        }
+
+      });
+
+
+      // -------------------------------------------------------
+      // RODAPÉ DE TODAS AS PÁGINAS
+      // -------------------------------------------------------
+
+      const totalPaginas =
+
+        doc.internal.getNumberOfPages();
+
+
+      for (
+        let pagina = 1;
+        pagina <= totalPaginas;
+        pagina++
+      ) {
+
+        doc.setPage(
+          pagina
+        );
+
+
+        doc.setFontSize(
+          8
+        );
+
+
+        doc.setTextColor(
+          100,
+          100,
+          100
+        );
+
+
+        doc.text(
+
+          `Página ${pagina} de ${totalPaginas}`,
+
+          148.5,
+
+          205,
+
+          {
+            align:
+              "center"
+          }
+
+        );
+
+      }
+
+
+      // -------------------------------------------------------
+      // DOWNLOAD
+      // -------------------------------------------------------
+
+      doc.save(
+        nomeArquivo
+      );
+
+
+      return true;
+
+    }
+
+
+    // =========================================================
+    // ABRIR CONFIRMAÇÃO DE EXPORTAÇÃO
+    // =========================================================
+
+    function abrirConfirmacaoExportar(
+      formato = "excel"
+    ) {
+
+      if (dados.length === 0) {
+
+        alert(
+          "Não existem dados para exportar."
+        );
+
+
         return;
       }
 
 
+      formatoExportacao =
+        formato;
+
+
       confirmacaoExportar.style.display =
         "flex";
+
     }
 
 
-    botaoExportar.onclick =
-      abrirConfirmacaoExportar;
+    // =========================================================
+    // BOTÃO EXCEL
+    // =========================================================
 
+    botaoExportar.onclick =
+      function () {
+
+        abrirConfirmacaoExportar(
+          "excel"
+        );
+
+      };
+
+
+    // =========================================================
+    // BOTÃO EXCEL DO MODAL
+    // =========================================================
 
     botaoExportarModal.onclick =
-      abrirConfirmacaoExportar;
+      function () {
+
+        abrirConfirmacaoExportar(
+          "excel"
+        );
+
+      };
+
+
+    // =========================================================
+    // BOTÃO PDF
+    // =========================================================
+
+    botaoExportarPdf.onclick =
+      function () {
+
+        abrirConfirmacaoExportar(
+          "pdf"
+        );
+
+      };
+
+
+    // =========================================================
+    // BOTÃO PDF DO MODAL
+    // =========================================================
+
+    botaoExportarPdfModal.onclick =
+      function () {
+
+        abrirConfirmacaoExportar(
+          "pdf"
+        );
+
+      };
 
 
     // =========================================================
@@ -1141,16 +2214,43 @@
           confirmacaoExportar.style.display =
             "none";
 
+
           return;
         }
 
 
-        const exportado =
-          exportarExcel();
+        let exportado =
+          false;
 
+
+        // -----------------------------------------------------
+        // ESCOLHER FORMATO
+        // -----------------------------------------------------
+
+        if (
+          formatoExportacao ===
+          "pdf"
+        ) {
+
+          exportado =
+            exportarPDF();
+
+        } else {
+
+          exportado =
+            exportarExcel();
+
+        }
+
+
+        // -----------------------------------------------------
+        // SE NÃO EXPORTOU
+        // -----------------------------------------------------
 
         if (!exportado) {
+
           return;
+
         }
 
 
@@ -1159,6 +2259,7 @@
         // -----------------------------------------------------
 
         dados = [];
+
 
         salvarDados();
 
@@ -1169,17 +2270,27 @@
 
         limparUltimosSelects();
 
+
         carregarUltimosSelects();
+
 
         atualizarUI();
 
+
+        // -----------------------------------------------------
+        // FECHAR CONFIRMAÇÃO
+        // -----------------------------------------------------
 
         confirmacaoExportar.style.display =
           "none";
 
 
-        // Volta para o campo AUDITOR
+        // -----------------------------------------------------
+        // VOLTAR PARA AUDITOR
+        // -----------------------------------------------------
+
         selectBase.focus();
+
       };
 
 
@@ -1192,6 +2303,7 @@
 
         confirmacaoExportar.style.display =
           "none";
+
       };
 
 
@@ -1208,12 +2320,14 @@
             "Não existem dados para limpar."
           );
 
+
           return;
         }
 
 
         confirmacaoLimpar.style.display =
           "flex";
+
       };
 
 
@@ -1226,6 +2340,7 @@
 
         dados = [];
 
+
         salvarDados();
 
 
@@ -1235,7 +2350,9 @@
 
         limparUltimosSelects();
 
+
         carregarUltimosSelects();
+
 
         atualizarUI();
 
@@ -1244,12 +2361,16 @@
           "none";
 
 
-        erroMsg.textContent = "";
+        erroMsg.textContent =
+          "";
 
-        limiteMsg.textContent = "";
+
+        limiteMsg.textContent =
+          "";
 
 
         selectBase.focus();
+
       };
 
 
@@ -1262,15 +2383,19 @@
 
         confirmacaoLimpar.style.display =
           "none";
+
       };
 
 
     // =========================================================
-    // FECHAR MODAIS AO CLICAR FORA
+    // FECHAR MODAL DE EXPORTAÇÃO
+    // CLICANDO FORA
     // =========================================================
 
     confirmacaoExportar.addEventListener(
+
       "click",
+
       function (e) {
 
         if (
@@ -1280,13 +2405,23 @@
 
           confirmacaoExportar.style.display =
             "none";
+
         }
+
       }
+
     );
 
 
+    // =========================================================
+    // FECHAR MODAL DE LIMPEZA
+    // CLICANDO FORA
+    // =========================================================
+
     confirmacaoLimpar.addEventListener(
+
       "click",
+
       function (e) {
 
         if (
@@ -1296,8 +2431,11 @@
 
           confirmacaoLimpar.style.display =
             "none";
+
         }
+
       }
+
     );
 
 
@@ -1307,11 +2445,15 @@
 
     carregarUltimosSelects();
 
+
     atualizarUI();
+
 
     inputCodigo.focus();
 
+
   </script>
+
 
 </body>
 </html>
