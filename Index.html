@@ -2,18 +2,23 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>AUDITORIA DE DEVOLIÇÕES</title>
-  <!-- Adiciona a biblioteca SheetJS para gerar Excel -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AUDITORIA DE DEVOLUÇÕES</title>
+
+  <!-- Biblioteca SheetJS para gerar Excel -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       font-family: Arial, sans-serif;
       text-align: center;
       margin: 0;
       padding: 0;
       background-color: #f4f4f4;
-      box-sizing: border-box;
     }
 
     .header-banner {
@@ -23,7 +28,7 @@
       font-size: 22px;
       font-weight: bold;
       margin-bottom: 30px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
     #top-info {
@@ -38,7 +43,6 @@
       margin-bottom: 30px;
       max-width: 400px;
       width: 100%;
-      box-sizing: border-box;
       padding: 0 10px;
     }
 
@@ -54,14 +58,14 @@
       font-size: 0.9rem;
     }
 
-    select, input[type="text"] {
+    select,
+    input[type="text"] {
       width: 100%;
       height: 36px;
       font-size: 16px;
       border: 1px solid black;
       display: block;
       margin: 0 auto;
-      box-sizing: border-box;
       padding: 0 8px;
       border-radius: 4px;
       background-color: white;
@@ -75,7 +79,6 @@
       border: 1px solid black;
       background-color: #e0e0e0;
       border-radius: 4px;
-      box-sizing: border-box;
       transition: background-color 0.3s ease;
     }
 
@@ -83,19 +86,23 @@
       background-color: #d0d0d0;
     }
 
-    /* Botão enviar centralizado */
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
     #btn-enviar {
       display: block;
       margin: 0 auto 10px auto;
       background-color: white;
     }
 
-    /* Botões lado a lado */
     #botoes-container {
       display: flex;
       justify-content: center;
       gap: 10px;
       margin-bottom: 30px;
+      padding: 0 10px;
     }
 
     #botoes-container button {
@@ -109,12 +116,12 @@
       width: 90%;
       max-width: 900px;
       margin: 0 auto 30px auto;
-      box-sizing: border-box;
       font-size: 16px;
       background-color: white;
     }
 
-    th, td {
+    th,
+    td {
       border: 1px solid black;
       padding: 10px;
       text-align: center;
@@ -135,9 +142,9 @@
       background: white;
       z-index: 1000;
       flex-direction: column;
-      box-sizing: border-box;
       padding-top: 80px;
       align-items: center;
+      overflow-y: auto;
     }
 
     #modal-botoes-topo {
@@ -164,11 +171,13 @@
       display: none !important;
     }
 
-    #mensagem-erro, #mensagem-limite {
+    #mensagem-erro,
+    #mensagem-limite {
       color: red;
       font-weight: bold;
       text-align: center;
       font-size: 14px;
+      min-height: 18px;
     }
 
     #rodape {
@@ -186,10 +195,11 @@
       left: 0;
       width: 100vw;
       height: 100vh;
-      background: rgba(0,0,0,0.6);
+      background: rgba(0, 0, 0, 0.6);
       z-index: 1200;
       align-items: center;
       justify-content: center;
+      padding: 20px;
     }
 
     #confirmacao-exportar > div,
@@ -199,6 +209,7 @@
       border-radius: 10px;
       text-align: center;
       max-width: 320px;
+      width: 100%;
     }
 
     #confirmacao-exportar button,
@@ -207,8 +218,51 @@
       width: 90px;
       padding: 8px;
     }
+
+    @media (max-width: 600px) {
+      .header-banner {
+        font-size: 19px;
+        padding: 16px 10px;
+      }
+
+      #top-info {
+        font-size: 14px;
+      }
+
+      #botoes-container {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      #botoes-container button {
+        width: 100%;
+        max-width: 300px;
+      }
+
+      table {
+        width: 98%;
+        font-size: 13px;
+      }
+
+      th,
+      td {
+        padding: 7px 4px;
+      }
+
+      #modal-botoes-topo {
+        gap: 8px;
+        width: 100%;
+        justify-content: center;
+      }
+
+      #modal-botoes-topo button {
+        padding: 9px 15px;
+        font-size: 14px;
+      }
+    }
   </style>
 </head>
+
 <body>
 
   <div class="header-banner">
@@ -216,311 +270,1048 @@
   </div>
 
   <div id="top-info">
-    QTD Bipada: <span id="contador">0</span> | Último código: <span id="ultimo-codigo">-</span>
+    QTD Bipada:
+    <span id="contador">0</span>
+    |
+    Último código:
+    <span id="ultimo-codigo">-</span>
   </div>
 
   <form class="form-container" id="meuFormulario">
+
     <div class="form-group">
       <label for="base">AUDITOR</label>
+
       <select id="base" required>
-        <option value="" disabled>Selecione o AUDITOR</option>
-        <option>Jonathan D M R </option>
-        <option>Douleiber J M F </option>
-        <option>Marcos M </option>
-        <option>Nathalia C V B </option>
-        <option>Gabriel L M </option>
-        <option>Sofia C P G </option>
-        <option>Kauany T P </option>
-        <option>Mailen A C R </option>
-        <option>Nubia E R </option>
-        <option>Yosden J P A </option>
-        <option>Fabiana D S P</option>
-        <option>OUTROS</option>
-      
+        <option value="" disabled selected>Selecione o AUDITOR</option>
+        <option value="Jonathan D M R">Jonathan D M R</option>
+        <option value="Douleiber J M F">Douleiber J M F</option>
+        <option value="Marcos M">Marcos M</option>
+        <option value="Nathalia C V B">Nathalia C V B</option>
+        <option value="Gabriel L M">Gabriel L M</option>
+        <option value="Sofia C P G">Sofia C P G</option>
+        <option value="Kauany T P">Kauany T P</option>
+        <option value="Mailen A C R">Mailen A C R</option>
+        <option value="Nubia E R">Nubia E R</option>
+        <option value="Yosden J P A">Yosden J P A</option>
+        <option value="Fabiana D S P">Fabiana D S P</option>
+        <option value="OUTROS">OUTROS</option>
       </select>
     </div>
 
     <div class="form-group">
       <label for="setor">PJ</label>
+
       <select id="setor" required>
-        <option value="" disabled>Selecione o PJ</option>
-        <option> DEVOLUÇÃO JOSE IVAN </option>
-        <option> DEVOLUÇÃO JAPÃO </option>
-        <option> DEVOLUÇÃO PASCOAL </option>
-        <option> DEVOLUÇÃO LITORAL </option>
-        <option> DEVOLUÇÃO OUTROS </option>
-        <option> DEVOLUÇÃO DESISTENCIA MOTORISTA </option>
+        <option value="" disabled selected>Selecione o PJ</option>
+        <option value="DEVOLUÇÃO JOSE IVAN">DEVOLUÇÃO JOSE IVAN</option>
+        <option value="DEVOLUÇÃO JAPÃO">DEVOLUÇÃO JAPÃO</option>
+        <option value="DEVOLUÇÃO PASCOAL">DEVOLUÇÃO PASCOAL</option>
+        <option value="DEVOLUÇÃO LITORAL">DEVOLUÇÃO LITORAL</option>
+        <option value="DEVOLUÇÃO OUTROS">DEVOLUÇÃO OUTROS</option>
+        <option value="DEVOLUÇÃO DESISTENCIA MOTORISTA">
+          DEVOLUÇÃO DESISTENCIA MOTORISTA
+        </option>
       </select>
     </div>
 
     <div class="form-group">
-      <label for="codigo">CODIGO</label>
-      <input type="text" id="codigo" required autocomplete="off" />
+      <label for="codigo">CÓDIGO</label>
+
+      <input
+        type="text"
+        id="codigo"
+        required
+        autocomplete="off"
+        inputmode="text"
+      />
     </div>
 
-    <button type="submit" id="btn-enviar">ENVIAR</button>
+    <button type="submit" id="btn-enviar">
+      ENVIAR
+    </button>
+
     <div id="mensagem-erro"></div>
     <div id="mensagem-limite"></div>
+
   </form>
 
   <div id="botoes-container">
-    <button id="botao-tabela">Consultar Peças</button>
-    <button id="botao-exportar">Exportar Excel</button>
-    <button id="botao-limpar">Limpar tudo</button>
+    <button id="botao-tabela">
+      Consultar Peças
+    </button>
+
+    <button id="botao-exportar">
+      Exportar Excel
+    </button>
+
+    <button id="botao-limpar">
+      Limpar tudo
+    </button>
   </div>
 
   <div id="modal-tabela">
+
     <div id="modal-botoes-topo">
-      <button id="botao-ocultar">Voltar</button>
-      <button id="botao-exportar-modal">Exportar Excel</button>
+      <button id="botao-ocultar">
+        Voltar
+      </button>
+
+      <button id="botao-exportar-modal">
+        Exportar Excel
+      </button>
     </div>
+
     <table id="tabela">
       <thead>
         <tr>
           <th>AUDITOR</th>
           <th>PJ</th>
-          <th>CODIGO</th>
+          <th>CÓDIGO</th>
           <th>Data/Hora</th>
         </tr>
       </thead>
+
       <tbody></tbody>
     </table>
+
   </div>
 
   <div id="rodape">
-    Restantes: <span id="restantes">2500</span>
+    Restantes:
+    <span id="restantes">2500</span>
   </div>
+
+  <!-- CONFIRMAÇÃO EXPORTAR -->
 
   <div id="confirmacao-exportar">
+
     <div>
-      <p>Após exportar a auditoria será reiniciado, deseja continuar?</p>
-      <button id="confirmar-sim-exportar">Sim</button>
-      <button id="confirmar-nao-exportar">Não</button>
+      <p>
+        Após exportar, a auditoria será reiniciada.
+        Deseja continuar?
+      </p>
+
+      <button id="confirmar-sim-exportar">
+        Sim
+      </button>
+
+      <button id="confirmar-nao-exportar">
+        Não
+      </button>
     </div>
+
   </div>
 
+  <!-- CONFIRMAÇÃO LIMPAR -->
+
   <div id="confirmacao-limpar">
+
     <div>
-      <p>Todos os dados serão apagados, deseja continuar?</p>
-      <button id="confirmar-sim-limpar">Sim</button>
-      <button id="confirmar-nao-limpar">Não</button>
+      <p>
+        Todos os dados serão apagados.
+        Deseja continuar?
+      </p>
+
+      <button id="confirmar-sim-limpar">
+        Sim
+      </button>
+
+      <button id="confirmar-nao-limpar">
+        Não
+      </button>
     </div>
+
   </div>
 
   <script>
+    // =========================================================
+    // ELEMENTOS
+    // =========================================================
+
     const form = document.getElementById("meuFormulario");
-    const tabelaBody = document.querySelector("#tabela tbody");
-    const contador = document.getElementById("contador");
-    const ultimoCodigo = document.getElementById("ultimo-codigo");
-    const restantes = document.getElementById("restantes");
-    const btnEnviar = document.getElementById("btn-enviar");
-    const erroMsg = document.getElementById("mensagem-erro");
-    const limiteMsg = document.getElementById("mensagem-limite");
-    const modalTabela = document.getElementById("modal-tabela");
-    const botaoTabela = document.getElementById("botao-tabela");
-    const botaoOcultar = document.getElementById("botao-ocultar");
-    const botaoExportar = document.getElementById("botao-exportar");
-    const botaoExportarModal = document.getElementById("botao-exportar-modal");
-    const botaoLimpar = document.getElementById("botao-limpar");
-    const confirmacaoExportar = document.getElementById("confirmacao-exportar");
-    const btnSimExportar = document.getElementById("confirmar-sim-exportar");
-    const btnNaoExportar = document.getElementById("confirmar-nao-exportar");
-    const confirmacaoLimpar = document.getElementById("confirmacao-limpar");
-    const btnSimLimpar = document.getElementById("confirmar-sim-limpar");
-    const btnNaoLimpar = document.getElementById("confirmar-nao-limpar");
-    const selectBase = document.getElementById("base");
-    const selectSetor = document.getElementById("setor");
+
+    const tabelaBody =
+      document.querySelector("#tabela tbody");
+
+    const contador =
+      document.getElementById("contador");
+
+    const ultimoCodigo =
+      document.getElementById("ultimo-codigo");
+
+    const restantes =
+      document.getElementById("restantes");
+
+    const btnEnviar =
+      document.getElementById("btn-enviar");
+
+    const erroMsg =
+      document.getElementById("mensagem-erro");
+
+    const limiteMsg =
+      document.getElementById("mensagem-limite");
+
+    const modalTabela =
+      document.getElementById("modal-tabela");
+
+    const botaoTabela =
+      document.getElementById("botao-tabela");
+
+    const botaoOcultar =
+      document.getElementById("botao-ocultar");
+
+    const botaoExportar =
+      document.getElementById("botao-exportar");
+
+    const botaoExportarModal =
+      document.getElementById("botao-exportar-modal");
+
+    const botaoLimpar =
+      document.getElementById("botao-limpar");
+
+    const confirmacaoExportar =
+      document.getElementById("confirmacao-exportar");
+
+    const btnSimExportar =
+      document.getElementById("confirmar-sim-exportar");
+
+    const btnNaoExportar =
+      document.getElementById("confirmar-nao-exportar");
+
+    const confirmacaoLimpar =
+      document.getElementById("confirmacao-limpar");
+
+    const btnSimLimpar =
+      document.getElementById("confirmar-sim-limpar");
+
+    const btnNaoLimpar =
+      document.getElementById("confirmar-nao-limpar");
+
+    const selectBase =
+      document.getElementById("base");
+
+    const selectSetor =
+      document.getElementById("setor");
+
+    const inputCodigo =
+      document.getElementById("codigo");
+
+    const topInfo =
+      document.getElementById("top-info");
+
+    const rodape =
+      document.getElementById("rodape");
+
+
+    // =========================================================
+    // CONFIGURAÇÕES
+    // =========================================================
 
     const LIMITE = 2500;
-    let dados = JSON.parse(localStorage.getItem("dadosInventario") || "[]");
+
+    const STORAGE_DADOS = "dadosInventario";
+    const STORAGE_BASE = "ultimoBase";
+    const STORAGE_SETOR = "ultimoSetor";
+
+
+    // =========================================================
+    // CARREGAMENTO SEGURO DOS DADOS
+    // =========================================================
+
+    let dados = [];
+
+    try {
+      const dadosSalvos =
+        localStorage.getItem(STORAGE_DADOS);
+
+      dados = dadosSalvos
+        ? JSON.parse(dadosSalvos)
+        : [];
+
+      if (!Array.isArray(dados)) {
+        dados = [];
+      }
+
+    } catch (erro) {
+      console.error(
+        "Erro ao carregar dados:",
+        erro
+      );
+
+      dados = [];
+    }
+
+
+    // =========================================================
+    // SALVAR DADOS
+    // =========================================================
 
     function salvarDados() {
-      localStorage.setItem("dadosInventario", JSON.stringify(dados));
+      try {
+        localStorage.setItem(
+          STORAGE_DADOS,
+          JSON.stringify(dados)
+        );
+      } catch (erro) {
+        console.error(
+          "Erro ao salvar dados:",
+          erro
+        );
+
+        erroMsg.textContent =
+          "Erro ao salvar os dados no navegador.";
+      }
     }
+
+
+    // =========================================================
+    // SALVAR ÚLTIMOS SELECIONADOS
+    // =========================================================
 
     function salvarUltimosSelects() {
-      localStorage.setItem("ultimoBase", selectBase.value);
-      localStorage.setItem("ultimoSetor", selectSetor.value);
+
+      try {
+
+        if (selectBase.value) {
+          localStorage.setItem(
+            STORAGE_BASE,
+            selectBase.value
+          );
+        }
+
+        if (selectSetor.value) {
+          localStorage.setItem(
+            STORAGE_SETOR,
+            selectSetor.value
+          );
+        }
+
+      } catch (erro) {
+        console.error(
+          "Erro ao salvar seleções:",
+          erro
+        );
+      }
     }
+
+
+    // =========================================================
+    // LIMPAR ÚLTIMOS SELECIONADOS
+    // =========================================================
 
     function limparUltimosSelects() {
-      localStorage.removeItem("ultimoBase");
-      localStorage.removeItem("ultimoSetor");
+
+      localStorage.removeItem(
+        STORAGE_BASE
+      );
+
+      localStorage.removeItem(
+        STORAGE_SETOR
+      );
     }
+
+
+    // =========================================================
+    // CARREGAR ÚLTIMOS SELECIONADOS
+    // =========================================================
 
     function carregarUltimosSelects() {
-      const baseSalvo = localStorage.getItem("ultimoBase");
-      const setorSalvo = localStorage.getItem("ultimoSetor");
 
-      if (baseSalvo) selectBase.value = baseSalvo;
-      else selectBase.value = "";
+      const baseSalvo =
+        localStorage.getItem(STORAGE_BASE);
 
-      if (setorSalvo) selectSetor.value = setorSalvo;
-      else selectSetor.value = "";
+      const setorSalvo =
+        localStorage.getItem(STORAGE_SETOR);
+
+
+      if (baseSalvo) {
+        selectBase.value = baseSalvo;
+      } else {
+        selectBase.value = "";
+      }
+
+
+      if (setorSalvo) {
+        selectSetor.value = setorSalvo;
+      } else {
+        selectSetor.value = "";
+      }
     }
 
+
+    // =========================================================
+    // ATUALIZAR INTERFACE
+    // =========================================================
+
     function atualizarUI() {
+
       tabelaBody.innerHTML = "";
-      dados.forEach(d => {
-        const row = tabelaBody.insertRow();
-        row.insertCell(0).textContent = d.base;
-        row.insertCell(1).textContent = d.setor;
-        row.insertCell(2).textContent = d.codigo;
-        row.insertCell(3).textContent = d.dataHora;
+
+
+      dados.forEach((dado) => {
+
+        const row =
+          tabelaBody.insertRow();
+
+        row.insertCell(0).textContent =
+          dado.base;
+
+        row.insertCell(1).textContent =
+          dado.setor;
+
+        row.insertCell(2).textContent =
+          dado.codigo;
+
+        row.insertCell(3).textContent =
+          dado.dataHora;
       });
 
-      contador.textContent = dados.length;
-      restantes.textContent = LIMITE - dados.length;
+
+      contador.textContent =
+        dados.length;
+
+
+      const quantidadeRestante =
+        Math.max(
+          0,
+          LIMITE - dados.length
+        );
+
+
+      restantes.textContent =
+        quantidadeRestante;
+
 
       if (dados.length >= LIMITE) {
+
         btnEnviar.disabled = true;
-        limiteMsg.textContent = "Limite atingido, para continuar, exporte os dados inseridos até agora.";
+
+        limiteMsg.textContent =
+          "Limite atingido. Para continuar, exporte os dados inseridos até agora.";
+
       } else {
+
         btnEnviar.disabled = false;
+
         limiteMsg.textContent = "";
       }
     }
 
-    form.addEventListener("submit", e => {
-      e.preventDefault();
-      erroMsg.textContent = "";
 
-      const base = selectBase.value;
-      const setor = selectSetor.value;
-      let codigo = document.getElementById("codigo").value.trim().toUpperCase();
+    // =========================================================
+    // ENVIO / BIPAGEM
+    // =========================================================
 
-      if (!base || !setor) {
-        erroMsg.textContent = "Por favor, selecione o AUDITOR.";
-        return;
+    form.addEventListener(
+      "submit",
+      function (e) {
+
+        e.preventDefault();
+
+        erroMsg.textContent = "";
+
+
+        const base =
+          selectBase.value.trim();
+
+        const setor =
+          selectSetor.value.trim();
+
+        let codigo =
+          inputCodigo.value
+            .trim()
+            .toUpperCase();
+
+
+        // -----------------------------------------------------
+        // VALIDAR AUDITOR
+        // -----------------------------------------------------
+
+        if (!base) {
+
+          erroMsg.textContent =
+            "Por favor, selecione o AUDITOR.";
+
+          selectBase.focus();
+
+          return;
+        }
+
+
+        // -----------------------------------------------------
+        // VALIDAR PJ
+        // -----------------------------------------------------
+
+        if (!setor) {
+
+          erroMsg.textContent =
+            "Por favor, selecione o PJ.";
+
+          selectSetor.focus();
+
+          return;
+        }
+
+
+        // -----------------------------------------------------
+        // VALIDAR CÓDIGO VAZIO
+        // -----------------------------------------------------
+
+        if (!codigo) {
+
+          erroMsg.textContent =
+            "Digite ou bipe um código.";
+
+          inputCodigo.focus();
+
+          return;
+        }
+
+
+        // -----------------------------------------------------
+        // VALIDAR CARACTERES
+        // -----------------------------------------------------
+
+        if (!/^[A-Z0-9]+$/.test(codigo)) {
+
+          erroMsg.textContent =
+            "Somente letras e números são permitidos.";
+
+          inputCodigo.focus();
+
+          return;
+        }
+
+
+        // -----------------------------------------------------
+        // VERIFICAR DUPLICIDADE
+        // -----------------------------------------------------
+
+        const codigoJaExiste =
+          dados.some(
+            (dado) =>
+              dado.codigo === codigo
+          );
+
+
+        if (codigoJaExiste) {
+
+          erroMsg.textContent =
+            "Código já bipado.";
+
+          inputCodigo.select();
+
+          return;
+        }
+
+
+        // -----------------------------------------------------
+        // VERIFICAR LIMITE
+        // -----------------------------------------------------
+
+        if (dados.length >= LIMITE) {
+
+          erroMsg.textContent =
+            "Limite atingido. Não é possível adicionar mais.";
+
+          return;
+        }
+
+
+        // -----------------------------------------------------
+        // DATA E HORA
+        // -----------------------------------------------------
+
+        const dataHora =
+          new Date().toLocaleString(
+            "pt-BR"
+          );
+
+
+        // -----------------------------------------------------
+        // ADICIONAR REGISTRO
+        // -----------------------------------------------------
+
+        dados.push({
+          base: base,
+          setor: setor,
+          codigo: codigo,
+          dataHora: dataHora
+        });
+
+
+        // -----------------------------------------------------
+        // SALVAR
+        // -----------------------------------------------------
+
+        salvarDados();
+
+        salvarUltimosSelects();
+
+
+        // -----------------------------------------------------
+        // ATUALIZAR TELA
+        // -----------------------------------------------------
+
+        ultimoCodigo.textContent =
+          codigo;
+
+        inputCodigo.value = "";
+
+        atualizarUI();
+
+        inputCodigo.focus();
       }
+    );
 
-      if (!/^[A-Z0-9]+$/.test(codigo)) {
-        erroMsg.textContent = "Somente letras e números são permitidos.";
-        return;
-      }
 
-      if (dados.some(d => d.codigo === codigo)) {
-        erroMsg.textContent = "Código já bipado.";
-        return;
-      }
+    // =========================================================
+    // CONSULTAR PEÇAS
+    // =========================================================
 
-      if (dados.length >= LIMITE) {
-        erroMsg.textContent = "Limite atingido, não é possível adicionar mais.";
-        return;
-      }
+    botaoTabela.onclick = function () {
 
-      const dataHora = new Date().toLocaleString("pt-BR");
-      dados.push({ base, setor, codigo, dataHora });
-      salvarDados();
-      ultimoCodigo.textContent = codigo;
-      document.getElementById("codigo").value = "";
-      salvarUltimosSelects();
-      atualizarUI();
-    });
+      modalTabela.style.display =
+        "flex";
 
-    botaoTabela.onclick = () => {
-      modalTabela.style.display = "flex";
       form.classList.add("hidden");
+
       botaoTabela.classList.add("hidden");
+
       botaoExportar.classList.add("hidden");
+
       botaoLimpar.classList.add("hidden");
-      document.getElementById("top-info").classList.add("hidden");
-      document.getElementById("rodape").classList.add("hidden");
+
+      topInfo.classList.add("hidden");
+
+      rodape.classList.add("hidden");
+
       erroMsg.textContent = "";
+
       limiteMsg.textContent = "";
     };
 
-    botaoOcultar.onclick = () => {
-      modalTabela.style.display = "none";
+
+    // =========================================================
+    // VOLTAR
+    // =========================================================
+
+    botaoOcultar.onclick = function () {
+
+      modalTabela.style.display =
+        "none";
+
       form.classList.remove("hidden");
+
       botaoTabela.classList.remove("hidden");
+
       botaoExportar.classList.remove("hidden");
+
       botaoLimpar.classList.remove("hidden");
-      document.getElementById("top-info").classList.remove("hidden");
-      document.getElementById("rodape").classList.remove("hidden");
+
+      topInfo.classList.remove("hidden");
+
+      rodape.classList.remove("hidden");
+
+      inputCodigo.focus();
     };
 
-    function exportarExcel() {
-      const linhas = [
-        ["AUDITOR", "PJ", "CODIGO", "Data/Hora"],
-        ...dados.map(d => [d.base, d.setor, d.codigo, d.dataHora])
-      ];
 
-      const worksheet = XLSX.utils.aoa_to_sheet(linhas);
-      const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, "INVENTARIO");
+    // =========================================================
+    // FORMATAR TEXTO PARA NOME DE ARQUIVO
+    // =========================================================
 
-      const agora = new Date();
-      const dia = String(agora.getDate()).padStart(2, "0");
-      const mes = String(agora.getMonth() + 1).padStart(2, "0");
-      const ano = agora.getFullYear();
-      const hora = String(agora.getHours()).padStart(2, "0");
-      const minuto = String(agora.getMinutes()).padStart(2, "0");
-      const segundo = String(agora.getSeconds()).padStart(2, "0");
+    function formatarTexto(texto) {
 
-      function formatarTexto(texto) {
-        return texto
-          .normalize("NFD")
-          .replace(/[\u0300-\u036f]/g, "")
-          .replace(/[^a-zA-Z0-9]/g, "-")
-          .replace(/-+/g, "-")
-          .replace(/^-|-$/g, "")
-          .toUpperCase();
-      }
-
-      const baseNome = formatarTexto(selectBase.value || "SEM-BASE");
-      const setorBruto = selectSetor.value || "SEM-SETOR";
-      const setorTexto = setorBruto.split("-").slice(1).join("-").trim(); 
-      const setorNome = formatarTexto(setorTexto);
-
-      const nomeArquivo = `INVENTARIO-${baseNome}-${setorNome}-${dia}-${mes}-${ano}-${hora}h${minuto}m${segundo}s.xlsx`;
-
-      XLSX.writeFile(workbook, nomeArquivo);
+      return texto
+        .normalize("NFD")
+        .replace(
+          /[\u0300-\u036f]/g,
+          ""
+        )
+        .replace(
+          /[^a-zA-Z0-9]+/g,
+          "-"
+        )
+        .replace(
+          /-+/g,
+          "-"
+        )
+        .replace(
+          /^-|-$/g,
+          ""
+        )
+        .toUpperCase();
     }
 
-    botaoExportar.onclick = () => {
-      confirmacaoExportar.style.display = "flex";
-    };
 
-    botaoExportarModal.onclick = () => {
-      confirmacaoExportar.style.display = "flex";
-    };
+    // =========================================================
+    // EXPORTAR EXCEL
+    // =========================================================
 
-    btnSimExportar.onclick = () => {
-      exportarExcel();
-      dados = [];
-      salvarDados();
-      ultimoCodigo.textContent = "-";
-      limparUltimosSelects();
-      carregarUltimosSelects();
-      atualizarUI();
-      confirmacaoExportar.style.display = "none";
-    };
+    function exportarExcel() {
 
-    btnNaoExportar.onclick = () => {
-      confirmacaoExportar.style.display = "none";
-    };
+      if (dados.length === 0) {
 
-    botaoLimpar.onclick = () => {
-      confirmacaoLimpar.style.display = "flex";
-    };
+        alert(
+          "Não existem dados para exportar."
+        );
 
-    btnSimLimpar.onclick = () => {
-      dados = [];
-      salvarDados();
-      ultimoCodigo.textContent = "-";
-      limparUltimosSelects();
-      carregarUltimosSelects();
-      atualizarUI();
-      confirmacaoLimpar.style.display = "none";
-    };
+        return false;
+      }
 
-    btnNaoLimpar.onclick = () => {
-      confirmacaoLimpar.style.display = "none";
-    };
+
+      const linhas = [
+
+        [
+          "AUDITOR",
+          "PJ",
+          "CODIGO",
+          "Data/Hora"
+        ],
+
+        ...dados.map(
+          (dado) => [
+            dado.base,
+            dado.setor,
+            dado.codigo,
+            dado.dataHora
+          ]
+        )
+      ];
+
+
+      // -----------------------------------------------------
+      // CRIAR PLANILHA
+      // -----------------------------------------------------
+
+      const worksheet =
+        XLSX.utils.aoa_to_sheet(
+          linhas
+        );
+
+
+      // -----------------------------------------------------
+      // AJUSTAR LARGURA DAS COLUNAS
+      // -----------------------------------------------------
+
+      worksheet["!cols"] = [
+        { wch: 25 },
+        { wch: 35 },
+        { wch: 20 },
+        { wch: 22 }
+      ];
+
+
+      // -----------------------------------------------------
+      // CRIAR ARQUIVO
+      // -----------------------------------------------------
+
+      const workbook =
+        XLSX.utils.book_new();
+
+
+      XLSX.utils.book_append_sheet(
+        workbook,
+        worksheet,
+        "DEVOLUCOES"
+      );
+
+
+      // -----------------------------------------------------
+      // DATA E HORA DO ARQUIVO
+      // -----------------------------------------------------
+
+      const agora =
+        new Date();
+
+      const dia =
+        String(
+          agora.getDate()
+        ).padStart(2, "0");
+
+      const mes =
+        String(
+          agora.getMonth() + 1
+        ).padStart(2, "0");
+
+      const ano =
+        agora.getFullYear();
+
+      const hora =
+        String(
+          agora.getHours()
+        ).padStart(2, "0");
+
+      const minuto =
+        String(
+          agora.getMinutes()
+        ).padStart(2, "0");
+
+      const segundo =
+        String(
+          agora.getSeconds()
+        ).padStart(2, "0");
+
+
+      // -----------------------------------------------------
+      // NOME DO AUDITOR
+      // -----------------------------------------------------
+
+      const baseNome =
+        formatarTexto(
+          selectBase.value ||
+          "SEM-BASE"
+        );
+
+
+      // -----------------------------------------------------
+      // NOME DO PJ
+      // CORRIGIDO
+      // -----------------------------------------------------
+
+      const setorNome =
+        formatarTexto(
+          selectSetor.value ||
+          "SEM-SETOR"
+        );
+
+
+      // -----------------------------------------------------
+      // NOME FINAL DO ARQUIVO
+      // -----------------------------------------------------
+
+      const nomeArquivo =
+        `AUDITORIA-DEVOLUCOES-${baseNome}-${setorNome}-${dia}-${mes}-${ano}-${hora}h${minuto}m${segundo}s.xlsx`;
+
+
+      // -----------------------------------------------------
+      // DOWNLOAD
+      // -----------------------------------------------------
+
+      XLSX.writeFile(
+        workbook,
+        nomeArquivo
+      );
+
+
+      return true;
+    }
+
+
+    // =========================================================
+    // ABRIR CONFIRMAÇÃO DE EXPORTAÇÃO
+    // =========================================================
+
+    function abrirConfirmacaoExportar() {
+
+      if (dados.length === 0) {
+
+        alert(
+          "Não existem dados para exportar."
+        );
+
+        return;
+      }
+
+
+      confirmacaoExportar.style.display =
+        "flex";
+    }
+
+
+    botaoExportar.onclick =
+      abrirConfirmacaoExportar;
+
+
+    botaoExportarModal.onclick =
+      abrirConfirmacaoExportar;
+
+
+    // =========================================================
+    // CONFIRMAR EXPORTAÇÃO
+    // =========================================================
+
+    btnSimExportar.onclick =
+      function () {
+
+        if (dados.length === 0) {
+
+          confirmacaoExportar.style.display =
+            "none";
+
+          return;
+        }
+
+
+        const exportado =
+          exportarExcel();
+
+
+        if (!exportado) {
+          return;
+        }
+
+
+        // -----------------------------------------------------
+        // LIMPAR DADOS APÓS EXPORTAÇÃO
+        // -----------------------------------------------------
+
+        dados = [];
+
+        salvarDados();
+
+
+        ultimoCodigo.textContent =
+          "-";
+
+
+        limparUltimosSelects();
+
+        carregarUltimosSelects();
+
+        atualizarUI();
+
+
+        confirmacaoExportar.style.display =
+          "none";
+
+
+        // Volta para o campo AUDITOR
+        selectBase.focus();
+      };
+
+
+    // =========================================================
+    // CANCELAR EXPORTAÇÃO
+    // =========================================================
+
+    btnNaoExportar.onclick =
+      function () {
+
+        confirmacaoExportar.style.display =
+          "none";
+      };
+
+
+    // =========================================================
+    // ABRIR CONFIRMAÇÃO DE LIMPEZA
+    // =========================================================
+
+    botaoLimpar.onclick =
+      function () {
+
+        if (dados.length === 0) {
+
+          alert(
+            "Não existem dados para limpar."
+          );
+
+          return;
+        }
+
+
+        confirmacaoLimpar.style.display =
+          "flex";
+      };
+
+
+    // =========================================================
+    // CONFIRMAR LIMPEZA
+    // =========================================================
+
+    btnSimLimpar.onclick =
+      function () {
+
+        dados = [];
+
+        salvarDados();
+
+
+        ultimoCodigo.textContent =
+          "-";
+
+
+        limparUltimosSelects();
+
+        carregarUltimosSelects();
+
+        atualizarUI();
+
+
+        confirmacaoLimpar.style.display =
+          "none";
+
+
+        erroMsg.textContent = "";
+
+        limiteMsg.textContent = "";
+
+
+        selectBase.focus();
+      };
+
+
+    // =========================================================
+    // CANCELAR LIMPEZA
+    // =========================================================
+
+    btnNaoLimpar.onclick =
+      function () {
+
+        confirmacaoLimpar.style.display =
+          "none";
+      };
+
+
+    // =========================================================
+    // FECHAR MODAIS AO CLICAR FORA
+    // =========================================================
+
+    confirmacaoExportar.addEventListener(
+      "click",
+      function (e) {
+
+        if (
+          e.target ===
+          confirmacaoExportar
+        ) {
+
+          confirmacaoExportar.style.display =
+            "none";
+        }
+      }
+    );
+
+
+    confirmacaoLimpar.addEventListener(
+      "click",
+      function (e) {
+
+        if (
+          e.target ===
+          confirmacaoLimpar
+        ) {
+
+          confirmacaoLimpar.style.display =
+            "none";
+        }
+      }
+    );
+
+
+    // =========================================================
+    // INICIALIZAÇÃO
+    // =========================================================
 
     carregarUltimosSelects();
+
     atualizarUI();
+
+    inputCodigo.focus();
+
   </script>
+
 </body>
 </html>
