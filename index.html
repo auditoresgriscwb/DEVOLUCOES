@@ -1,22 +1,43 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
+
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
 
   <title>AUDITORIA DE DEVOLUÇÕES</title>
+
 
   <!-- =======================================================
        BIBLIOTECA SHEETJS - EXCEL
   ======================================================== -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js">
+  </script>
+
 
   <!-- =======================================================
-       BIBLIOTECAS JSPDF - PDF
+       BIBLIOTECA JSPDF - PDF
   ======================================================== -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
+  </script>
+
+
+  <!-- =======================================================
+       BIBLIOTECA AUTOTABLE - TABELA DO PDF
+  ======================================================== -->
+
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js">
+  </script>
 
 
   <style>
@@ -376,49 +397,61 @@
           Selecione o AUDITOR
         </option>
 
+
         <option value="Jonathan D M R">
           Jonathan D M R
         </option>
+
 
         <option value="Douleiber J M F">
           Douleiber J M F
         </option>
 
+
         <option value="Marcos M">
           Marcos M
         </option>
+
 
         <option value="Nathalia C V B">
           Nathalia C V B
         </option>
 
+
         <option value="Gabriel L M">
           Gabriel L M
         </option>
+
 
         <option value="Sofia C P G">
           Sofia C P G
         </option>
 
+
         <option value="Kauany T P">
           Kauany T P
         </option>
+
 
         <option value="Mailen A C R">
           Mailen A C R
         </option>
 
+
         <option value="Nubia E R">
           Nubia E R
         </option>
+
 
         <option value="Yosden J P A">
           Yosden J P A
         </option>
 
+
         <option value="Fabiana D S P">
           Fabiana D S P
         </option>
+
 
         <option value="OUTROS">
           OUTROS
@@ -451,25 +484,31 @@
           Selecione o PJ
         </option>
 
+
         <option value="DEVOLUÇÃO JOSE IVAN">
           DEVOLUÇÃO-JOSE-IVAN
         </option>
+
 
         <option value="DEVOLUÇÃO JAPÃO">
           DEVOLUÇÃO-JAPÃO
         </option>
 
+
         <option value="DEVOLUÇÃO PASCOAL">
           DEVOLUÇÃO-PASCOAL
         </option>
+
 
         <option value="DEVOLUÇÃO LITORAL">
           DEVOLUÇÃO-LITORAL
         </option>
 
+
         <option value="DEVOLUÇÃO OUTROS">
           DEVOLUÇÃO-OUTROS
         </option>
+
 
         <option value="DEVOLUÇÃO DESISTENCIA MOTORISTA">
           DEVOLUÇÃO-DESISTENCIA-MOTORISTA
@@ -523,24 +562,26 @@
 
   <div id="botoes-container">
 
+
     <button id="botao-tabela">
       Consultar Peças
     </button>
 
 
     <button id="botao-exportar">
-      Exportar Excel
+      Exportar Excel + PDF
     </button>
 
 
     <button id="botao-exportar-pdf">
-      Exportar PDF
+      Exportar Excel + PDF
     </button>
 
 
     <button id="botao-limpar">
       Limpar tudo
     </button>
+
 
   </div>
 
@@ -554,24 +595,27 @@
 
     <div id="modal-botoes-topo">
 
+
       <button id="botao-ocultar">
         Voltar
       </button>
 
 
       <button id="botao-exportar-modal">
-        Exportar Excel
+        Exportar Excel + PDF
       </button>
 
 
       <button id="botao-exportar-pdf-modal">
-        Exportar PDF
+        Exportar Excel + PDF
       </button>
+
 
     </div>
 
 
     <table id="tabela">
+
 
       <thead>
 
@@ -581,13 +625,16 @@
             AUDITOR
           </th>
 
+
           <th>
             PJ
           </th>
 
+
           <th>
             CÓDIGO
           </th>
+
 
           <th>
             Data/Hora
@@ -600,7 +647,9 @@
 
       <tbody></tbody>
 
+
     </table>
+
 
   </div>
 
@@ -625,10 +674,15 @@
 
   <div id="confirmacao-exportar">
 
+
     <div>
 
+
       <p>
+        Serão baixados o Excel e o PDF.
+        <br><br>
         Após exportar, a auditoria será reiniciada.
+        <br><br>
         Deseja continuar?
       </p>
 
@@ -642,7 +696,9 @@
         Não
       </button>
 
+
     </div>
+
 
   </div>
 
@@ -653,7 +709,9 @@
 
   <div id="confirmacao-limpar">
 
+
     <div>
+
 
       <p>
         Todos os dados serão apagados.
@@ -670,7 +728,9 @@
         Não
       </button>
 
+
     </div>
+
 
   </div>
 
@@ -848,7 +908,8 @@
     // CONFIGURAÇÕES
     // =========================================================
 
-    const LIMITE = 2500;
+    const LIMITE =
+      2500;
 
 
     const STORAGE_DADOS =
@@ -864,21 +925,14 @@
 
 
     // =========================================================
-    // FORMATO DA EXPORTAÇÃO
-    // =========================================================
-
-    let formatoExportacao =
-      "excel";
-
-
-    // =========================================================
-    // CARREGAMENTO SEGURO DOS DADOS
+    // CARREGAMENTO DOS DADOS
     // =========================================================
 
     let dados = [];
 
 
     try {
+
 
       const dadosSalvos =
         localStorage.getItem(
@@ -893,10 +947,14 @@
 
 
       if (!Array.isArray(dados)) {
+
         dados = [];
+
       }
 
+
     } catch (erro) {
+
 
       console.error(
         "Erro ao carregar dados:",
@@ -905,6 +963,7 @@
 
 
       dados = [];
+
     }
 
 
@@ -914,14 +973,18 @@
 
     function salvarDados() {
 
+
       try {
+
 
         localStorage.setItem(
           STORAGE_DADOS,
           JSON.stringify(dados)
         );
 
+
       } catch (erro) {
+
 
         console.error(
           "Erro ao salvar dados:",
@@ -931,6 +994,7 @@
 
         erroMsg.textContent =
           "Erro ao salvar os dados no navegador.";
+
       }
 
     }
@@ -942,33 +1006,42 @@
 
     function salvarUltimosSelects() {
 
+
       try {
 
+
         if (selectBase.value) {
+
 
           localStorage.setItem(
             STORAGE_BASE,
             selectBase.value
           );
 
+
         }
 
 
         if (selectSetor.value) {
+
 
           localStorage.setItem(
             STORAGE_SETOR,
             selectSetor.value
           );
 
+
         }
 
+
       } catch (erro) {
+
 
         console.error(
           "Erro ao salvar seleções:",
           erro
         );
+
 
       }
 
@@ -980,6 +1053,7 @@
     // =========================================================
 
     function limparUltimosSelects() {
+
 
       localStorage.removeItem(
         STORAGE_BASE
@@ -999,6 +1073,7 @@
 
     function carregarUltimosSelects() {
 
+
       const baseSalvo =
         localStorage.getItem(
           STORAGE_BASE
@@ -1013,24 +1088,32 @@
 
       if (baseSalvo) {
 
+
         selectBase.value =
           baseSalvo;
 
+
       } else {
 
-        selectBase.value = "";
+
+        selectBase.value =
+          "";
 
       }
 
 
       if (setorSalvo) {
 
+
         selectSetor.value =
           setorSalvo;
 
+
       } else {
 
-        selectSetor.value = "";
+
+        selectSetor.value =
+          "";
 
       }
 
@@ -1043,11 +1126,14 @@
 
     function atualizarUI() {
 
-      tabelaBody.innerHTML = "";
+
+      tabelaBody.innerHTML =
+        "";
 
 
       dados.forEach(
         (dado) => {
+
 
           const row =
             tabelaBody.insertRow();
@@ -1067,6 +1153,7 @@
 
           row.insertCell(3).textContent =
             dado.dataHora;
+
 
         }
       );
@@ -1089,6 +1176,7 @@
 
       if (dados.length >= LIMITE) {
 
+
         btnEnviar.disabled =
           true;
 
@@ -1096,7 +1184,9 @@
         limiteMsg.textContent =
           "Limite atingido. Para continuar, exporte os dados inseridos até agora.";
 
+
       } else {
+
 
         btnEnviar.disabled =
           false;
@@ -1117,6 +1207,7 @@
     form.addEventListener(
       "submit",
       function (e) {
+
 
         e.preventDefault();
 
@@ -1145,6 +1236,7 @@
 
         if (!base) {
 
+
           erroMsg.textContent =
             "Por favor, selecione o AUDITOR.";
 
@@ -1153,6 +1245,7 @@
 
 
           return;
+
         }
 
 
@@ -1162,6 +1255,7 @@
 
         if (!setor) {
 
+
           erroMsg.textContent =
             "Por favor, selecione o PJ.";
 
@@ -1170,14 +1264,16 @@
 
 
           return;
+
         }
 
 
         // -----------------------------------------------------
-        // VALIDAR CÓDIGO VAZIO
+        // VALIDAR CÓDIGO
         // -----------------------------------------------------
 
         if (!codigo) {
+
 
           erroMsg.textContent =
             "Digite ou bipe um código.";
@@ -1187,6 +1283,7 @@
 
 
           return;
+
         }
 
 
@@ -1196,6 +1293,7 @@
 
         if (!/^[A-Z0-9]+$/.test(codigo)) {
 
+
           erroMsg.textContent =
             "Somente letras e números são permitidos.";
 
@@ -1204,6 +1302,7 @@
 
 
           return;
+
         }
 
 
@@ -1220,6 +1319,7 @@
 
         if (codigoJaExiste) {
 
+
           erroMsg.textContent =
             "Código já bipado.";
 
@@ -1228,6 +1328,7 @@
 
 
           return;
+
         }
 
 
@@ -1237,11 +1338,13 @@
 
         if (dados.length >= LIMITE) {
 
+
           erroMsg.textContent =
             "Limite atingido. Não é possível adicionar mais.";
 
 
           return;
+
         }
 
 
@@ -1302,6 +1405,7 @@
 
         inputCodigo.focus();
 
+
       }
     );
 
@@ -1312,6 +1416,7 @@
 
     botaoTabela.onclick =
       function () {
+
 
         modalTabela.style.display =
           "flex";
@@ -1369,6 +1474,7 @@
     botaoOcultar.onclick =
       function () {
 
+
         modalTabela.style.display =
           "none";
 
@@ -1419,6 +1525,7 @@
 
     function formatarTexto(texto) {
 
+
       return texto
 
         .normalize("NFD")
@@ -1453,6 +1560,7 @@
     // =========================================================
 
     function gerarDataNomeArquivo() {
+
 
       const agora =
         new Date();
@@ -1493,13 +1601,21 @@
 
 
       return {
+
         agora,
+
         dia,
+
         mes,
+
         ano,
+
         hora,
+
         minuto,
+
         segundo
+
       };
 
     }
@@ -1511,7 +1627,9 @@
 
     function exportarExcel() {
 
+
       if (dados.length === 0) {
+
 
         alert(
           "Não existem dados para exportar."
@@ -1519,20 +1637,29 @@
 
 
         return false;
+
       }
 
 
       const linhas = [
 
+
         [
+
           "AUDITOR",
+
           "PJ",
+
           "CODIGO",
+
           "Data/Hora"
+
         ],
+
 
         ...dados.map(
           (dado) => [
+
 
             dado.base,
 
@@ -1542,15 +1669,13 @@
 
             dado.dataHora
 
+
           ]
         )
 
+
       ];
 
-
-      // -------------------------------------------------------
-      // CRIAR PLANILHA
-      // -------------------------------------------------------
 
       const worksheet =
         XLSX.utils.aoa_to_sheet(
@@ -1558,34 +1683,31 @@
         );
 
 
-      // -------------------------------------------------------
-      // LARGURA DAS COLUNAS
-      // -------------------------------------------------------
-
       worksheet["!cols"] = [
+
 
         {
           wch: 25
         },
 
+
         {
           wch: 35
         },
+
 
         {
           wch: 20
         },
 
+
         {
           wch: 22
         }
 
+
       ];
 
-
-      // -------------------------------------------------------
-      // CRIAR WORKBOOK
-      // -------------------------------------------------------
 
       const workbook =
         XLSX.utils.book_new();
@@ -1602,17 +1724,9 @@
       );
 
 
-      // -------------------------------------------------------
-      // DATA
-      // -------------------------------------------------------
-
       const dataArquivo =
         gerarDataNomeArquivo();
 
-
-      // -------------------------------------------------------
-      // AUDITOR
-      // -------------------------------------------------------
 
       const baseNome =
         formatarTexto(
@@ -1626,10 +1740,6 @@
         );
 
 
-      // -------------------------------------------------------
-      // PJ
-      // -------------------------------------------------------
-
       const setorNome =
         formatarTexto(
 
@@ -1642,22 +1752,17 @@
         );
 
 
-      // -------------------------------------------------------
-      // NOME FINAL
-      // -------------------------------------------------------
-
       const nomeArquivo =
 
         `AUDITORIA-DEVOLUCOES-${baseNome}-${setorNome}-${dataArquivo.dia}-${dataArquivo.mes}-${dataArquivo.ano}-${dataArquivo.hora}h${dataArquivo.minuto}m${dataArquivo.segundo}s.xlsx`;
 
 
-      // -------------------------------------------------------
-      // DOWNLOAD
-      // -------------------------------------------------------
-
       XLSX.writeFile(
+
         workbook,
+
         nomeArquivo
+
       );
 
 
@@ -1672,7 +1777,9 @@
 
     function exportarPDF() {
 
+
       if (dados.length === 0) {
+
 
         alert(
           "Não existem dados para exportar."
@@ -1680,17 +1787,15 @@
 
 
         return false;
+
       }
 
-
-      // -------------------------------------------------------
-      // VERIFICAR BIBLIOTECAS
-      // -------------------------------------------------------
 
       if (
         !window.jspdf ||
         !window.jspdf.jsPDF
       ) {
+
 
         alert(
           "Não foi possível carregar a biblioteca de PDF. Verifique sua conexão com a internet e tente novamente."
@@ -1698,12 +1803,9 @@
 
 
         return false;
+
       }
 
-
-      // -------------------------------------------------------
-      // CRIAR DOCUMENTO
-      // -------------------------------------------------------
 
       const {
         jsPDF
@@ -1725,17 +1827,9 @@
         });
 
 
-      // -------------------------------------------------------
-      // DATA
-      // -------------------------------------------------------
-
       const dataArquivo =
         gerarDataNomeArquivo();
 
-
-      // -------------------------------------------------------
-      // AUDITOR
-      // -------------------------------------------------------
 
       const auditor =
         dados[0]?.base ||
@@ -1745,10 +1839,6 @@
         "SEM AUDITOR";
 
 
-      // -------------------------------------------------------
-      // PJ
-      // -------------------------------------------------------
-
       const setor =
         dados[0]?.setor ||
 
@@ -1756,10 +1846,6 @@
 
         "SEM PJ";
 
-
-      // -------------------------------------------------------
-      // NOME DO ARQUIVO
-      // -------------------------------------------------------
 
       const baseNome =
         formatarTexto(
@@ -1779,7 +1865,7 @@
 
 
       // -------------------------------------------------------
-      // CABEÇALHO VERMELHO
+      // CABEÇALHO
       // -------------------------------------------------------
 
       doc.setFillColor(
@@ -1903,7 +1989,7 @@
 
 
       // -------------------------------------------------------
-      // DADOS DA TABELA
+      // DADOS
       // -------------------------------------------------------
 
       const linhasPDF =
@@ -1974,9 +2060,13 @@
             "middle",
 
           lineColor: [
+
             0,
+
             0,
+
             0
+
           ],
 
           lineWidth:
@@ -1987,15 +2077,23 @@
         headStyles: {
 
           fillColor: [
+
             211,
+
             47,
+
             47
+
           ],
 
           textColor: [
+
             255,
+
             255,
+
             255
+
           ],
 
           fontStyle:
@@ -2009,9 +2107,13 @@
         alternateRowStyles: {
 
           fillColor: [
+
             245,
+
             245,
+
             245
+
           ]
 
         },
@@ -2019,23 +2121,31 @@
         columnStyles: {
 
           0: {
+
             cellWidth:
               55
+
           },
 
           1: {
+
             cellWidth:
               75
+
           },
 
           2: {
+
             cellWidth:
               45
+
           },
 
           3: {
+
             cellWidth:
               55
+
           }
 
         },
@@ -2054,7 +2164,7 @@
 
 
       // -------------------------------------------------------
-      // RODAPÉ DE TODAS AS PÁGINAS
+      // RODAPÉ
       // -------------------------------------------------------
 
       const totalPaginas =
@@ -2067,6 +2177,7 @@
         pagina <= totalPaginas;
         pagina++
       ) {
+
 
         doc.setPage(
           pagina
@@ -2118,14 +2229,116 @@
 
 
     // =========================================================
+    // EXPORTAR EXCEL + PDF
+    // =========================================================
+
+    function exportarExcelEPDF() {
+
+
+      if (dados.length === 0) {
+
+
+        alert(
+          "Não existem dados para exportar."
+        );
+
+
+        return false;
+
+      }
+
+
+      // -------------------------------------------------------
+      // VERIFICAR EXCEL
+      // -------------------------------------------------------
+
+      if (
+        typeof XLSX ===
+        "undefined"
+      ) {
+
+
+        alert(
+          "A biblioteca do Excel não foi carregada."
+        );
+
+
+        return false;
+
+      }
+
+
+      // -------------------------------------------------------
+      // VERIFICAR PDF
+      // -------------------------------------------------------
+
+      if (
+        !window.jspdf ||
+        !window.jspdf.jsPDF
+      ) {
+
+
+        alert(
+          "A biblioteca do PDF não foi carregada."
+        );
+
+
+        return false;
+
+      }
+
+
+      // -------------------------------------------------------
+      // EXPORTAR EXCEL
+      // -------------------------------------------------------
+
+      const excelExportado =
+        exportarExcel();
+
+
+      if (!excelExportado) {
+
+
+        return false;
+
+      }
+
+
+      // -------------------------------------------------------
+      // EXPORTAR PDF
+      // -------------------------------------------------------
+
+      const pdfExportado =
+        exportarPDF();
+
+
+      if (!pdfExportado) {
+
+
+        alert(
+          "O Excel foi exportado, mas ocorreu um erro ao gerar o PDF."
+        );
+
+
+        return false;
+
+      }
+
+
+      return true;
+
+    }
+
+
+    // =========================================================
     // ABRIR CONFIRMAÇÃO DE EXPORTAÇÃO
     // =========================================================
 
-    function abrirConfirmacaoExportar(
-      formato = "excel"
-    ) {
+    function abrirConfirmacaoExportar() {
+
 
       if (dados.length === 0) {
+
 
         alert(
           "Não existem dados para exportar."
@@ -2133,11 +2346,8 @@
 
 
         return;
+
       }
-
-
-      formatoExportacao =
-        formato;
 
 
       confirmacaoExportar.style.display =
@@ -2147,29 +2357,27 @@
 
 
     // =========================================================
-    // BOTÃO EXCEL
+    // BOTÃO EXPORTAR
     // =========================================================
 
     botaoExportar.onclick =
       function () {
 
-        abrirConfirmacaoExportar(
-          "excel"
-        );
+
+        abrirConfirmacaoExportar();
 
       };
 
 
     // =========================================================
-    // BOTÃO EXCEL DO MODAL
+    // BOTÃO EXPORTAR DO MODAL
     // =========================================================
 
     botaoExportarModal.onclick =
       function () {
 
-        abrirConfirmacaoExportar(
-          "excel"
-        );
+
+        abrirConfirmacaoExportar();
 
       };
 
@@ -2181,9 +2389,8 @@
     botaoExportarPdf.onclick =
       function () {
 
-        abrirConfirmacaoExportar(
-          "pdf"
-        );
+
+        abrirConfirmacaoExportar();
 
       };
 
@@ -2195,9 +2402,8 @@
     botaoExportarPdfModal.onclick =
       function () {
 
-        abrirConfirmacaoExportar(
-          "pdf"
-        );
+
+        abrirConfirmacaoExportar();
 
       };
 
@@ -2209,38 +2415,49 @@
     btnSimExportar.onclick =
       function () {
 
+
         if (dados.length === 0) {
+
 
           confirmacaoExportar.style.display =
             "none";
 
 
           return;
+
         }
 
 
-        let exportado =
+        // -----------------------------------------------------
+        // DESABILITAR BOTÃO DURANTE EXPORTAÇÃO
+        // -----------------------------------------------------
+
+        btnSimExportar.disabled =
+          true;
+
+
+        btnSimExportar.textContent =
+          "Exportando...";
+
+
+        // -----------------------------------------------------
+        // EXPORTAR EXCEL + PDF
+        // -----------------------------------------------------
+
+        const exportado =
+          exportarExcelEPDF();
+
+
+        // -----------------------------------------------------
+        // REATIVAR BOTÃO
+        // -----------------------------------------------------
+
+        btnSimExportar.disabled =
           false;
 
 
-        // -----------------------------------------------------
-        // ESCOLHER FORMATO
-        // -----------------------------------------------------
-
-        if (
-          formatoExportacao ===
-          "pdf"
-        ) {
-
-          exportado =
-            exportarPDF();
-
-        } else {
-
-          exportado =
-            exportarExcel();
-
-        }
+        btnSimExportar.textContent =
+          "Sim";
 
 
         // -----------------------------------------------------
@@ -2248,6 +2465,7 @@
         // -----------------------------------------------------
 
         if (!exportado) {
+
 
           return;
 
@@ -2291,6 +2509,7 @@
 
         selectBase.focus();
 
+
       };
 
 
@@ -2300,6 +2519,7 @@
 
     btnNaoExportar.onclick =
       function () {
+
 
         confirmacaoExportar.style.display =
           "none";
@@ -2314,7 +2534,9 @@
     botaoLimpar.onclick =
       function () {
 
+
         if (dados.length === 0) {
+
 
           alert(
             "Não existem dados para limpar."
@@ -2322,6 +2544,7 @@
 
 
           return;
+
         }
 
 
@@ -2337,6 +2560,7 @@
 
     btnSimLimpar.onclick =
       function () {
+
 
         dados = [];
 
@@ -2381,6 +2605,7 @@
     btnNaoLimpar.onclick =
       function () {
 
+
         confirmacaoLimpar.style.display =
           "none";
 
@@ -2388,8 +2613,7 @@
 
 
     // =========================================================
-    // FECHAR MODAL DE EXPORTAÇÃO
-    // CLICANDO FORA
+    // FECHAR CONFIRMAÇÃO DE EXPORTAÇÃO CLICANDO FORA
     // =========================================================
 
     confirmacaoExportar.addEventListener(
@@ -2398,10 +2622,12 @@
 
       function (e) {
 
+
         if (
           e.target ===
           confirmacaoExportar
         ) {
+
 
           confirmacaoExportar.style.display =
             "none";
@@ -2414,8 +2640,7 @@
 
 
     // =========================================================
-    // FECHAR MODAL DE LIMPEZA
-    // CLICANDO FORA
+    // FECHAR CONFIRMAÇÃO DE LIMPEZA CLICANDO FORA
     // =========================================================
 
     confirmacaoLimpar.addEventListener(
@@ -2424,10 +2649,12 @@
 
       function (e) {
 
+
         if (
           e.target ===
           confirmacaoLimpar
         ) {
+
 
           confirmacaoLimpar.style.display =
             "none";
@@ -2456,4 +2683,5 @@
 
 
 </body>
+
 </html>
